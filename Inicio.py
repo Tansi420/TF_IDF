@@ -5,72 +5,149 @@ import pandas as pd
 import re
 from nltk.stem import SnowballStemmer
 
-# ---------- DISEÑO (la fuente de letra no se modifica) ----------
+# ---------- DISEÑO LLAMATIVO (solo CSS; la fuente de letra no se modifica) ----------
 st.markdown("""
 <style>
-    /* Fondo general: azul noche con un brillo cálido */
+    /* ===== Fondo animado tipo aurora ===== */
     .stApp {
-        background: radial-gradient(circle at top right, #3a1218 0%, #0b1220 45%, #060a14 100%);
-        color: #f1f5f9;
+        background: linear-gradient(-45deg, #1a0b3b, #0f2a6b, #6a11cb, #ff0080, #00c6ff, #1a0b3b);
+        background-size: 400% 400%;
+        animation: aurora 18s ease infinite;
+        color: #ffffff;
+    }
+    @keyframes aurora {
+        0%   { background-position: 0% 50%; }
+        50%  { background-position: 100% 50%; }
+        100% { background-position: 0% 50%; }
     }
 
-    /* Título con franja de color */
+    /* Cabecera transparente */
+    [data-testid="stHeader"] { background: transparent; }
+
+    /* ===== Tarjeta de cristal (glassmorphism) ===== */
+    .block-container {
+        background: rgba(255, 255, 255, 0.08);
+        backdrop-filter: blur(18px);
+        -webkit-backdrop-filter: blur(18px);
+        border: 1.5px solid rgba(255, 255, 255, 0.28);
+        border-radius: 28px;
+        box-shadow: 0 0 60px rgba(255, 0, 128, 0.35), 0 0 120px rgba(0, 198, 255, 0.25);
+        padding: 2.5rem 2.5rem 3rem 2.5rem !important;
+        margin-top: 1.5rem;
+        margin-bottom: 1.5rem;
+    }
+
+    /* ===== Título con degradado neón brillante ===== */
     h1 {
-        color: #ffffff !important;
-        background: linear-gradient(90deg, #d7263d, #ff6b35);
-        padding: 0.6rem 1rem;
-        border-radius: 12px;
-        border-left: 10px solid #ffd23f;
-        box-shadow: 0 6px 20px rgba(215, 38, 61, 0.35);
+        background: linear-gradient(90deg, #00f5ff, #ff00e5, #ffe600, #00f5ff);
+        background-size: 300% 100%;
+        -webkit-background-clip: text;
+        background-clip: text;
+        -webkit-text-fill-color: transparent;
+        animation: shine 6s linear infinite;
+        font-weight: 900 !important;
+        letter-spacing: 1px;
+        text-shadow: 0 0 30px rgba(255, 0, 229, 0.4);
+        padding-bottom: 0.6rem !important;
+        border-bottom: 4px solid transparent;
+        border-image: linear-gradient(90deg, #00f5ff, #ff00e5, #ffe600) 1;
+        margin-bottom: 1rem;
+    }
+    @keyframes shine {
+        0%   { background-position: 0% 50%; }
+        100% { background-position: 300% 50%; }
     }
 
-    /* Subtítulos */
+    /* ===== Subtítulos con barra de color ===== */
     h3 {
-        color: #ffd23f !important;
-        border-bottom: 2px solid #d7263d;
-        padding-bottom: 0.25rem;
+        color: #ffffff !important;
+        font-weight: 800 !important;
+        padding: 0.45rem 1rem !important;
+        margin-top: 1.5rem !important;
+        border-left: 8px solid #ffe600;
+        border-radius: 0 14px 14px 0;
+        background: linear-gradient(90deg, rgba(255, 0, 229, 0.45), rgba(0, 245, 255, 0.05));
+        text-shadow: 0 0 12px rgba(0, 245, 255, 0.7);
     }
 
-    /* Caja de texto y entrada */
+    /* Texto general y negritas resaltadas */
+    p, li, label, .stMarkdown { color: #f5f3ff; }
+    strong { color: #ffe600; text-shadow: 0 0 8px rgba(255, 230, 0, 0.45); }
+    em { color: #7df9ff; }
+
+    /* Etiquetas de los campos */
+    [data-testid="stWidgetLabel"] p {
+        color: #7df9ff !important;
+        font-weight: 700;
+        font-size: 1.02rem;
+        text-shadow: 0 0 10px rgba(0, 245, 255, 0.5);
+    }
+
+    /* ===== Campos de texto con brillo neón ===== */
     textarea, input {
-        background-color: #111a2e !important;
-        color: #f8fafc !important;
-        border: 1.5px solid #ff6b35 !important;
-        border-radius: 10px !important;
+        background: rgba(10, 5, 35, 0.75) !important;
+        color: #ffffff !important;
+        border: 2px solid #00f5ff !important;
+        border-radius: 16px !important;
+        box-shadow: 0 0 14px rgba(0, 245, 255, 0.45), inset 0 0 12px rgba(0, 245, 255, 0.12);
+        transition: all 0.25s ease;
     }
     textarea:focus, input:focus {
-        border-color: #ffd23f !important;
-        box-shadow: 0 0 0 2px rgba(255, 210, 63, 0.35) !important;
+        border-color: #ff00e5 !important;
+        box-shadow: 0 0 26px rgba(255, 0, 229, 0.8), inset 0 0 14px rgba(255, 0, 229, 0.2) !important;
+        transform: translateY(-2px);
+    }
+    [data-baseweb="textarea"], [data-baseweb="input"], [data-baseweb="base-input"] {
+        background: transparent !important;
+        border-radius: 16px !important;
     }
 
-    /* Botón principal */
+    /* ===== Botón gigante pulsante ===== */
     .stButton > button {
-        background: linear-gradient(135deg, #d7263d, #ff6b35);
-        color: #ffffff;
-        font-weight: bold;
-        border: none;
+        background: linear-gradient(135deg, #ff00e5, #7a00ff, #00c6ff);
+        background-size: 200% 200%;
+        animation: aurora 6s ease infinite, pulse 2.2s ease-in-out infinite;
+        color: #ffffff !important;
+        font-weight: 900;
+        font-size: 1.1rem;
+        letter-spacing: 0.5px;
+        border: 2px solid rgba(255, 255, 255, 0.7);
         border-radius: 999px;
-        padding: 0.6rem 1.6rem;
-        box-shadow: 0 0 18px rgba(215, 38, 61, 0.55);
-        transition: transform 0.15s ease, box-shadow 0.15s ease;
+        padding: 0.8rem 2.2rem;
+        transition: transform 0.2s ease;
     }
     .stButton > button:hover {
-        transform: scale(1.04);
-        box-shadow: 0 0 28px rgba(255, 107, 53, 0.8);
-        color: #ffffff;
+        transform: scale(1.08) rotate(-1deg);
+        border-color: #ffe600;
+        color: #ffffff !important;
+    }
+    .stButton > button:active { transform: scale(0.97); }
+    @keyframes pulse {
+        0%, 100% { box-shadow: 0 0 18px rgba(255, 0, 229, 0.7), 0 0 40px rgba(0, 198, 255, 0.4); }
+        50%      { box-shadow: 0 0 34px rgba(255, 230, 0, 0.8), 0 0 70px rgba(255, 0, 229, 0.6); }
     }
 
-    /* Tablas */
+    /* ===== Tablas ===== */
     [data-testid="stDataFrame"] {
-        border: 1.5px solid #d7263d;
-        border-radius: 10px;
+        border: 2px solid #ff00e5;
+        border-radius: 18px;
         overflow: hidden;
+        box-shadow: 0 0 24px rgba(255, 0, 229, 0.55), 0 0 50px rgba(0, 245, 255, 0.25);
     }
 
-    /* Alertas */
+    /* ===== Alertas ===== */
     [data-testid="stAlert"] {
+        border-radius: 16px;
+        border: 2px solid #ffe600;
+        box-shadow: 0 0 20px rgba(255, 230, 0, 0.5);
+    }
+
+    /* ===== Barra de scroll de neón ===== */
+    ::-webkit-scrollbar { width: 12px; }
+    ::-webkit-scrollbar-track { background: rgba(0, 0, 0, 0.3); }
+    ::-webkit-scrollbar-thumb {
+        background: linear-gradient(#ff00e5, #00f5ff);
         border-radius: 10px;
-        border-left: 6px solid #ffd23f;
     }
 </style>
 """, unsafe_allow_html=True)
